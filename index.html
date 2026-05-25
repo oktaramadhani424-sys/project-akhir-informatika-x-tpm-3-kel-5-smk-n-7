@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir Cafe fold - SMKN 7</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Premium Western Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Playfair Display for Western Elegant vibe, Plus Jakarta Sans for UI readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fcfbf7;
+        }
+        .western-title {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom scrollbar for better aesthetic */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5a880;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a88a5f;
+        }
+    </style>
+</head>
+<body class="text-neutral-800 min-h-screen flex flex-col">
+
+    <!-- SPANDUK NAMA RESTO (WESTERN STYLE BACKGROUND) -->
+    <header class="relative bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 text-amber-50 py-8 px-6 md:px-12 shadow-xl border-b-4 border-amber-600 overflow-hidden">
+        <!-- Overlay Vintage Pattern -->
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="absolute -right-10 -bottom-10 opacity-10 text-[12rem] pointer-events-none">
+            <i class="fa-solid fa-mug-hot"></i>
+        </div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+            <!-- Samping Kiri: Logo & Nama Resto -->
+            <div class="flex items-center gap-5">
+                <!-- Custom SVG Logo: Persatuan Kopi dan Angsa -->
+                <div class="bg-amber-100 p-3.5 rounded-full border-2 border-amber-500 shadow-md flex items-center justify-center shrink-0 w-20 h-20">
+                    <svg viewBox="0 0 100 100" class="w-full h-full text-amber-900" fill="currentColor">
+                        <!-- Mug Base / Body of Swan -->
+                        <path d="M25,55 C25,75 40,85 55,85 C70,85 75,75 75,55 C75,55 25,55 25,55 Z" />
+                        <!-- Swan Neck & Head coming out from the mug/coffee -->
+                        <path d="M60,55 C60,35 70,30 72,15 C72,10 65,12 60,18 C58,20 54,26 56,38" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Swan Beak (Amber Gold) -->
+                        <polygon points="72,13 78,14 74,19" fill="#d97706" />
+                        <!-- Swan Eye -->
+                        <circle cx="69" cy="18" r="1.5" fill="#000" />
+                        <!-- Coffee Steam / Wings Accent -->
+                        <path d="M35,45 C32,35 38,30 42,20 C40,25 38,35 42,45" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M47,48 C45,40 50,35 52,25 C50,30 48,40 51,48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <!-- Cup Handle -->
+                        <path d="M25,60 C15,60 15,75 25,75" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                
+                <div>
+                    <h1 class="western-title text-5xl md:text-6xl font-extrabold tracking-wide drop-shadow-md text-amber-100 flex items-center gap-2">
+                        fold <span class="text-amber-500 text-3xl">☕</span>
+                    </h1>
+                    <div class="mt-1 flex flex-col text-amber-200 font-medium">
+                        <span class="text-xs md:text-sm tracking-widest uppercase">Created by SMKN 7</span>
+                        <span class="text-xs text-amber-400 font-bold tracking-wider">X TPM 3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Samping Kanan: Status Meja Virtual (Live Indicator) -->
+            <div class="bg-amber-950/70 border border-amber-800 p-4 rounded-xl backdrop-blur-sm w-full md:w-auto">
+                <h3 class="text-xs font-semibold tracking-wider text-amber-400 uppercase mb-2 text-center md:text-left"><i class="fa-solid fa-chair mr-1"></i> Status Meja (1-10)</h3>
+                <div class="grid grid-cols-5 gap-1.5" id="meja-status-grid">
+                    <!-- Dinonaktifkan lewat JS -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN WRAPPER: Responsive Layout Kasir -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- KOLOM KIRI (DAFTAR MENU & PENCARIAN) - 7 COLS -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- TAHAP 1: TABEL PENCARIAN -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200">
+                <label for="search-input" class="block text-sm font-bold text-stone-700 mb-2"><i class="fa-solid fa-magnifying-glass mr-2 text-amber-700"></i>Cari Menu Favoritmu (Ketik Minimal 3 Huruf)</label>
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Contoh: cof, bur, steaks, tea..." 
+                           class="w-full bg-stone-50 text-stone-900 pl-4 pr-10 py-3 rounded-xl border-2 border-stone-200 focus:border-amber-600 focus:outline-none transition-all placeholder:text-stone-400 text-base font-medium">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" id="search-status-icon">
+                        <i class="fa-solid fa-keyboard"></i>
+                    </span>
+                </div>
+                <!-- Pesan pencarian aktif -->
+                <div id="search-badge" class="hidden mt-2 inline-flex items-center gap-1 bg-amber-50 text-amber-800 text-xs px-2.5 py-1 rounded-md border border-amber-200 font-medium">
+                    <span>Menampilkan hasil pencarian</span>
+                    <button onclick="clearSearch()" class="ml-1 hover:text-red-600"><i class="fa-solid fa-circle-xmark"></i></button>
+                </div>
+            </div>
+
+            <!-- TAHAP 2: DAFTAR MENU -->
+            <div id="menu-container" class="space-y-8">
+                <!-- Hidangan Pembuka -->
+                <div id="section-pembuka" class="menu-section">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="h-1 w-8 bg-amber-600 rounded-full"></span>
+                        <h2 class="western-title text-2xl font-bold text-stone-800 flex items-center gap-2">Hidangan Pembuka <span class="text-sm font-normal text-stone-500">(Appetizer)</span></h2>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="grid-pembuka">
+                        <!-- Menu items will be injected here via JS -->
+                    </div>
+                </div>
+
+                <!-- Hidangan Utama -->
+                <div id="section-utama" class="menu-section">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="h-1 w-8 bg-amber-600 rounded-full"></span>
+                        <h2 class="western-title text-2xl font-bold text-stone-800 flex items-center gap-2">Hidangan Utama <span class="text-sm font-normal text-stone-500">(Main Course)</span></h2>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="grid-utama">
+                        <!-- Menu items will be injected here via JS -->
+                    </div>
+                </div>
+
+                <!-- Hidangan Penutup -->
+                <div id="section-penutup" class="menu-section">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="h-1 w-8 bg-amber-600 rounded-full"></span>
+                        <h2 class="western-title text-2xl font-bold text-stone-800 flex items-center gap-2">Hidangan Penutup <span class="text-sm font-normal text-stone-500">(Dessert)</span></h2>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="grid-penutup">
+                        <!-- Menu items will be injected here via JS -->
+                    </div>
+                </div>
+
+                <!-- Minuman -->
+                <div id="section-minuman" class="menu-section">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="h-1 w-8 bg-amber-600 rounded-full"></span>
+                        <h2 class="western-title text-2xl font-bold text-stone-800 flex items-center gap-2">Minuman <span class="text-sm font-normal text-stone-500">(Beverages)</span></h2>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="grid-minuman">
+                        <!-- Menu items will be injected here via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- HASIL TIDAK DITEMUKAN -->
+            <div id="menu-not-found" class="hidden flex-col items-center justify-center p-12 bg-white rounded-2xl border border-stone-200 text-center shadow-sm">
+                <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-utensils text-3xl text-amber-600 animate-bounce"></i>
+                </div>
+                <h3 class="text-lg font-bold text-stone-800 mb-1">menu tidak dapat di temukan</h3>
+                <p class="text-stone-500 text-sm max-w-sm">Maaf, kata kunci tidak cocok dengan hidangan atau minuman manapun di daftar menu fold.</p>
+                <button onclick="clearSearch()" class="mt-4 px-4 py-2 bg-amber-800 text-white rounded-xl text-xs font-semibold hover:bg-amber-950 transition-all shadow-sm">Tampilkan Semua Menu</button>
+            </div>
+
+        </section>
+
+        <!-- KOLOM KANAN (PROSES TRANSAKSI & KASIR) - 5 COLS -->
+        <section class="lg:col-span-5 flex flex-col gap-4">
+            
+            <!-- TAHAP NAVIGATION TAB ATAS -->
+            <div class="bg-stone-900 p-2.5 rounded-2xl shadow-md grid grid-cols-3 gap-1">
+                <button onclick="switchTab('pesanan')" id="tab-pesanan" class="py-2.5 px-2 text-center rounded-xl text-xs md:text-sm font-bold flex flex-col items-center justify-center gap-1 transition-all bg-amber-700 text-white shadow">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span>Pesanan</span>
+                </button>
+                <button onclick="switchTab('daftar-pesanan')" id="tab-daftar" class="py-2.5 px-2 text-center rounded-xl text-xs md:text-sm font-bold flex flex-col items-center justify-center gap-1 transition-all text-stone-400 hover:text-amber-100 hover:bg-stone-800">
+                    <div class="relative">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span id="badge-daftar-pesanan" class="hidden absolute -top-1.5 -right-1.5 bg-amber-500 text-neutral-900 text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black">0</span>
+                    </div>
+                    <span>Daftar Pesanan</span>
+                </button>
+                <button onclick="switchTab('riwayat-pesanan')" id="tab-riwayat" class="py-2.5 px-2 text-center rounded-xl text-xs md:text-sm font-bold flex flex-col items-center justify-center gap-1 transition-all text-stone-400 hover:text-amber-100 hover:bg-stone-800">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Riwayat Pesanan</span>
+                </button>
+            </div>
+
+            <!-- INNER CONTAINER KANAN -->
+            <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 md:p-5 flex-grow flex flex-col min-h-[500px] max-h-[85vh] overflow-y-auto">
+                
+                <!-- ================= TAB 1: PESANAN CURRENT ================= -->
+                <div id="content-pesanan" class="flex-grow flex flex-col h-full">
+                    <h3 class="font-bold text-stone-800 border-b border-stone-100 pb-3 mb-4 flex justify-between items-center text-sm md:text-base">
+                        <span><i class="fa-solid fa-cash-register mr-2 text-amber-700"></i>Piring Belanja Kasir</span>
+                        <button onclick="clearCurrentCart()" class="text-xs text-red-500 hover:underline flex items-center gap-1"><i class="fa-solid fa-trash-can"></i> Kosongkan</button>
+                    </h3>
+                    
+                    <!-- CART ITEMS LIST -->
+                    <div id="cart-list" class="space-y-3 flex-grow overflow-y-auto max-h-[350px] pr-1 mb-4">
+                        <!-- Dummy empty state -->
+                        <div class="h-48 flex flex-col items-center justify-center text-stone-400 text-center">
+                            <i class="fa-solid fa-mug-saucer text-4xl mb-3 text-stone-300"></i>
+                            <p class="text-sm font-medium">Belum ada pesanan.</p>
+                            <p class="text-xs text-stone-400 mt-1">Silakan klik menu makanan/minuman di sebelah kiri untuk memesan.</p>
+                        </div>
+                    </div>
+
+                    <!-- TOTAL HARGA AKURAT -->
+                    <div class="border-t-2 border-dashed border-stone-200 pt-4 mt-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-sm text-stone-500 font-semibold">Total Pembayaran:</span>
+                            <span id="cart-total" class="text-xl md:text-2xl font-black text-amber-900">Rp0</span>
+                        </div>
+
+                        <!-- TOMBOL LANJUTKAN -->
+                        <div class="flex justify-end">
+                            <button id="btn-lanjut-pesanan" onclick="showFormPelanggan()" class="w-full md:w-auto bg-amber-800 hover:bg-amber-900 text-white font-bold px-6 py-3 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span>Lanjutkan Pesanan</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ================= MODAL DATA PELANGGAN (FORMULIR DIBAWAH CART) ================= -->
+                <div id="content-form-pelanggan" class="hidden flex-grow flex flex-col">
+                    <div class="flex items-center gap-2 mb-4">
+                        <button onclick="backToCart()" class="text-stone-500 hover:text-stone-800 py-1"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>
+                        <h3 class="font-bold text-stone-800 text-sm md:text-base ml-auto">Data Pelanggan & Meja</h3>
+                    </div>
+
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Nama Pelanggan <span class="text-red-500">*</span></label>
+                            <input type="text" id="cust-name" placeholder="Ketik nama pelanggan..." class="w-full bg-stone-50 text-stone-900 px-4 py-2.5 rounded-xl border-2 border-stone-200 focus:border-amber-600 focus:outline-none transition-all text-sm font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 uppercase mb-1.5">Metode Sajian</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="border-2 border-stone-200 rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer hover:bg-stone-50 transition-all font-semibold text-sm has-[:checked]:border-amber-700 has-[:checked]:bg-amber-50">
+                                    <input type="radio" name="cust-sajian" value="Dine In" checked onchange="toggleMejaField(true)" class="accent-amber-700"> Dine In
+                                </label>
+                                <label class="border-2 border-stone-200 rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer hover:bg-stone-50 transition-all font-semibold text-sm has-[:checked]:border-amber-700 has-[:checked]:bg-amber-50">
+                                    <input type="radio" name="cust-sajian" value="Take Away" onchange="toggleMejaField(false)" class="accent-amber-700"> Take Away
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="field-meja">
+                            <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Pilih Nomor Meja <span class="text-red-500">*</span></label>
+                            <select id="cust-meja" class="w-full bg-stone-50 text-stone-900 px-4 py-2.5 rounded-xl border-2 border-stone-200 focus:border-amber-600 focus:outline-none transition-all text-sm font-medium">
+                                <option value="">-- Pilih Meja --</option>
+                                <option value="Meja 1">Meja 1</option>
+                                <option value="Meja 2">Meja 2</option>
+                                <option value="Meja 3">Meja 3</option>
+                                <option value="Meja 4">Meja 4 (Penuh/Kosong Tergantung List)</option>
+                                <option value="Meja 5">Meja 5</option>
+                                <option value="Meja 6">Meja 6</option>
+                                <option value="Meja 7">Meja 7</option>
+                                <option value="Meja 8">Meja 8</option>
+                                <option value="Meja 9">Meja 9</option>
+                                <option value="Meja 10">Meja 10</option>
+                            </select>
+                            <span class="text-[10px] text-stone-400 mt-1 block">Wajib dipilih jika makan di tempat (Dine In)</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Waktu Memesan (WIB)</label>
+                            <input type="text" id="cust-time" readonly class="w-full bg-stone-100 text-stone-600 px-4 py-2.5 rounded-xl border border-stone-200 text-sm font-semibold select-none">
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT KE DAFTAR PESANAN -->
+                    <div class="border-t border-stone-100 pt-4 mt-4 flex gap-3">
+                        <button onclick="backToCart()" class="flex-1 py-3 px-4 border-2 border-stone-200 hover:border-stone-400 text-stone-600 font-bold rounded-xl text-sm transition-all">Kembali</button>
+                        <button onclick="submitOrderToDaftar()" class="flex-grow py-3 px-6 bg-amber-800 hover:bg-amber-900 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan ke Daftar Pesanan
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- ================= TAB 2: DAFTAR PESANAN ================= -->
+                <div id="content-daftar-pesanan" class="hidden flex-grow flex flex-col h-full">
+                    <h3 class="font-bold text-stone-800 border-b border-stone-100 pb-3 mb-4 flex items-center justify-between text-sm md:text-base">
+                        <span><i class="fa-solid fa-file-invoice-dollar mr-2 text-amber-700"></i>Daftar Antrean Tagihan</span>
+                        <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold" id="badge-antrean-count">0 Aktif</span>
+                    </h3>
+
+                    <div id="daftar-pesanan-list" class="space-y-4 flex-grow overflow-y-auto max-h-[500px] pr-1">
+                        <!-- Disini data antrean di-render via JS -->
+                        <div class="h-48 flex flex-col items-center justify-center text-stone-400 text-center">
+                            <i class="fa-solid fa-receipt text-4xl mb-3 text-stone-300"></i>
+                            <p class="text-sm font-medium">Tidak ada antrean pesanan aktif.</p>
+                            <p class="text-xs text-stone-400 mt-1">Buat pesanan di tab sebelah dan klik "Simpan ke Daftar Pesanan".</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ================= SUB-HALAMAN PEMBAYARAN KASIR ================= -->
+                <div id="content-pembayaran" class="hidden flex-grow flex flex-col">
+                    <div class="flex items-center gap-2 mb-4 border-b border-stone-100 pb-3">
+                        <button onclick="cancelPembayaran()" class="text-stone-500 hover:text-stone-800 py-1 text-xs font-bold"><i class="fa-solid fa-arrow-left mr-1"></i> Batal</button>
+                        <h3 class="font-extrabold text-stone-800 text-sm md:text-base ml-auto">Kasir Pembayaran</h3>
+                    </div>
+
+                    <!-- Info Ringkas Pesanan Yang Sedang Dibayar -->
+                    <div class="bg-amber-50/50 rounded-xl p-3 border border-amber-200 mb-4 text-xs space-y-1">
+                        <div class="flex justify-between font-bold">
+                            <span>Nama: <span id="pay-name" class="text-stone-800">Udin</span></span>
+                            <span id="pay-meja-label" class="text-amber-800">Meja 4</span>
+                        </div>
+                        <div class="flex justify-between text-stone-500">
+                            <span>Metode: <span id="pay-sajian">Dine In</span></span>
+                            <span id="pay-time">19:15 WIB</span>
+                        </div>
+                        <div class="border-t border-dashed border-amber-200 pt-1.5 mt-1.5 flex justify-between font-black text-sm text-amber-950">
+                            <span>Total Tagihan:</span>
+                            <span id="pay-total-tagihan">Rp120.000</span>
+                        </div>
+                    </div>
+
+                    <!-- PILIH METODE BAYAR -->
+                    <div class="space-y-4 flex-grow">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 uppercase mb-2">Metode Pembayaran</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="border-2 border-stone-200 rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer hover:bg-stone-50 transition-all font-semibold text-sm has-[:checked]:border-amber-700 has-[:checked]:bg-amber-50">
+                                    <input type="radio" name="pay-method" value="cash" checked onchange="switchPayMethod('cash')" class="accent-amber-700"> <i class="fa-solid fa-money-bill-wave text-emerald-600"></i> Cash
+                                </label>
+                                <label class="border-2 border-stone-200 rounded-xl p-3 flex items-center justify-center gap-2 cursor-pointer hover:bg-stone-50 transition-all font-semibold text-sm has-[:checked]:border-amber-700 has-[:checked]:bg-amber-50">
+                                    <input type="radio" name="pay-method" value="digital" onchange="switchPayMethod('digital')" class="accent-amber-700"> <i class="fa-solid fa-wallet text-indigo-600"></i> Digital
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- OPSI METODE CASH -->
+                        <div id="panel-cash" class="space-y-3 bg-stone-50 p-4 rounded-xl border border-stone-200">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Uang Yang Diberikan (Rp)</label>
+                                <input type="number" id="cash-input" min="0" placeholder="Ketik nominal uang cash..." oninput="calculateKembalian()" class="w-full bg-white text-stone-900 px-4 py-2 rounded-xl border-2 border-stone-200 focus:border-amber-600 focus:outline-none transition-all text-sm font-semibold">
+                            </div>
+                            <div class="flex justify-between items-center bg-stone-100 p-2.5 rounded-lg border border-stone-200 text-xs">
+                                <span class="text-stone-500 font-bold">Kembalian:</span>
+                                <span id="cash-change" class="text-base font-black text-emerald-600">Rp0</span>
+                            </div>
+
+                            <!-- Tombol Bayar Cash -->
+                            <button onclick="processPayCash()" class="w-full mt-3 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> Proses & Selesaikan Pembayaran
+                            </button>
+                        </div>
+
+                        <!-- OPSI METODE DIGITAL -->
+                        <div id="panel-digital" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 uppercase mb-1.5">Pilih Dompet / Bank Digital</label>
+                                <div class="grid grid-cols-5 gap-1.5">
+                                    <button onclick="selectDigitalProvider('bca')" id="btn-digi-bca" class="digi-provider py-2 text-xs font-extrabold border-2 border-stone-200 rounded-lg hover:bg-stone-50 text-blue-800">BCA</button>
+                                    <button onclick="selectDigitalProvider('mandiri')" id="btn-digi-mandiri" class="digi-provider py-2 text-xs font-extrabold border-2 border-stone-200 rounded-lg hover:bg-stone-50 text-indigo-900">Mandiri</button>
+                                    <button onclick="selectDigitalProvider('dana')" id="btn-digi-dana" class="digi-provider py-2 text-xs font-extrabold border-2 border-stone-200 rounded-lg hover:bg-stone-50 text-blue-500">DANA</button>
+                                    <button onclick="selectDigitalProvider('ovo')" id="btn-digi-ovo" class="digi-provider py-2 text-xs font-extrabold border-2 border-stone-200 rounded-lg hover:bg-stone-50 text-purple-600">OVO</button>
+                                    <button onclick="selectDigitalProvider('gopay')" id="btn-digi-gopay" class="digi-provider py-2 text-xs font-extrabold border-2 border-stone-200 rounded-lg hover:bg-stone-50 text-green-600">GoPay</button>
+                                </div>
+                            </div>
+
+                            <!-- SUB-PANEL PERNYATAAN BANK (BCA / MANDIRI) -->
+                            <div id="digi-bank-inputs" class="hidden space-y-3 bg-blue-50/50 p-4 rounded-xl border border-blue-200">
+                                <div class="flex items-center gap-1.5 text-blue-800 text-xs font-bold mb-1">
+                                    <i class="fa-solid fa-building-columns"></i> <span id="bank-selected-label">E-Banking</span>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 uppercase mb-0.5">Nomor Rekening</label>
+                                    <input type="text" id="bank-rek" placeholder="Contoh: 1234567890" class="w-full bg-white text-stone-900 px-3 py-1.5 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 uppercase mb-0.5">PIN Rekening</label>
+                                    <input type="password" id="bank-pin" placeholder="••••••" class="w-full bg-white text-stone-900 px-3 py-1.5 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 uppercase mb-0.5">Nominal Transfer (Rp)</label>
+                                    <input type="number" id="bank-amount" class="w-full bg-stone-100 text-stone-600 px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-black" readonly>
+                                </div>
+                                <div class="flex justify-end gap-2 pt-2">
+                                    <button onclick="processDigitalBankSubmit()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow transition-all flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-paper-plane"></i> Submit
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- SUB-PANEL QRIS (DANA / OVO / GOPAY) -->
+                            <div id="digi-qris" class="hidden flex-col items-center justify-center p-4 bg-white rounded-xl border border-stone-200 text-center">
+                                <p class="text-[11px] font-bold text-indigo-800 uppercase mb-2"><i class="fa-solid fa-qrcode mr-1"></i> Scan QRIS QR - <span id="qris-provider-label">E-Wallet</span></p>
+                                
+                                <!-- Simulative QR Code using Custom CSS/SVG -->
+                                <div class="w-36 h-36 bg-stone-100 p-2 border-2 border-stone-300 rounded-lg flex items-center justify-center relative mb-2">
+                                    <svg viewBox="0 0 100 100" class="w-full h-full text-stone-900" fill="currentColor">
+                                        <!-- Corners -->
+                                        <path d="M10,10 H30 V20 H20 V30 H10 Z M70,10 H90 V30 H80 V20 H70 Z M10,70 H20 V80 H30 V90 H10 Z M80,80 H70 V90 H90 V70 H80 Z" />
+                                        <!-- Inner QR blocks -->
+                                        <rect x="15" y="15" width="8" height="8" />
+                                        <rect x="77" y="15" width="8" height="8" />
+                                        <rect x="15" y="77" width="8" height="8" />
+                                        <!-- Random QR lines & dots -->
+                                        <path d="M40,20 H50 V30 H40 Z M45,45 H55 V55 H45 Z M60,35 H70 V45 H60 Z M30,60 H40 V75 H30 Z M55,65 H70 V70 H55 Z M50,80 H65 V85 H50 Z" />
+                                        <!-- Centered Swan Logo as branding watermark inside QRIS -->
+                                        <circle cx="50" cy="50" r="10" fill="#fff" />
+                                        <path d="M48,52 C48,46 52,44 52,50" fill="none" stroke="#78350f" stroke-width="2" />
+                                    </svg>
+                                </div>
+                                <span class="text-[10px] text-stone-400">Hubungkan gopay dana dan ovo digital.</span>
+                                
+                                <!-- Tombol aksi QRIS -->
+                                <div class="flex gap-2 w-full mt-4">
+                                    <button onclick="cancelPembayaran()" class="flex-1 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-xs font-bold transition-all">Kembali</button>
+                                    <button onclick="simulateQrisSuccess()" class="flex-grow py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all shadow"><i class="fa-solid fa-square-check mr-1"></i> Selesai di-Scan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ================= TAB 3: RIWAYAT PESANAN ================= -->
+                <div id="content-riwayat-pesanan" class="hidden flex-grow flex flex-col h-full">
+                    <h3 class="font-bold text-stone-800 border-b border-stone-100 pb-3 mb-4 flex justify-between items-center text-sm md:text-base">
+                        <span><i class="fa-solid fa-clock-rotate-left mr-2 text-amber-700"></i>Arsip Transaksi Selesai</span>
+                        <span id="badge-riwayat-count" class="bg-stone-100 text-stone-800 text-xs px-2 py-0.5 rounded-full font-bold">0 Selesai</span>
+                    </h3>
+
+                    <div id="riwayat-pesanan-list" class="space-y-4 flex-grow overflow-y-auto max-h-[500px] pr-1">
+                        <!-- Disini data riwayat transaksi di-render via JS -->
+                        <div class="h-48 flex flex-col items-center justify-center text-stone-400 text-center">
+                            <i class="fa-solid fa-clock text-4xl mb-3 text-stone-300"></i>
+                            <p class="text-sm font-medium">Belum ada riwayat transaksi.</p>
+                            <p class="text-xs text-stone-400 mt-1">Selesaikan pembayaran di "Daftar Pesanan" untuk melihat riwayat di sini.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER KREDIT KELOMPOK -->
+    <footer class="bg-stone-900 border-t-2 border-stone-800 text-stone-500 py-6 text-center text-xs px-4 mt-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="western-title font-bold text-amber-500 text-sm">fold cafe</span> - Premium Western Cashier System v1.2
+            </div>
+            <div>
+                &copy; 2026 Projek Sekolah - <span class="text-stone-300 font-semibold">SMKN 7</span> (X TPM 3). All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ALERT / CUSTOM BANNER SYSTEM (GANTI alert()) -->
+    <div id="custom-alert" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-[90%] bg-stone-900 text-stone-100 px-5 py-4 rounded-xl shadow-2xl border-l-4 border-amber-500 flex items-start gap-3 transition-all animate-bounce">
+        <span class="text-amber-500 text-xl" id="alert-icon"><i class="fa-solid fa-circle-exclamation"></i></span>
+        <div class="flex-grow">
+            <h4 class="font-extrabold text-sm" id="alert-title">Notifikasi</h4>
+            <p class="text-xs text-stone-400 mt-0.5" id="alert-msg">Pesan alert di sini.</p>
+        </div>
+        <button onclick="closeAlert()" class="text-stone-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- JS CODE: LOGIC KASIR DENGAN REALTIME DATABASE / LOCAL MEMORY -->
+    <script>
+        // DAFTAR MENU LENGKAP DENGAN GAMBAR UNSPLASH SESUAI KATEGORI (UPDATED - MENU DIHAPUS)
+        const menuList = [
+            // Hidangan Pembuka
+            { id: 'pemb-1', name: 'French Fries', price: 18000, category: 'pembuka', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=400&q=80' },
+            { id: 'pemb-2', name: 'Chicken Wings', price: 28000, category: 'pembuka', image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=400&q=80' },
+            { id: 'pemb-3', name: 'Nachos Cheese', price: 25000, category: 'pembuka', image: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=400&q=80' },
+            { id: 'pemb-4', name: 'Caesar Salad', price: 30000, category: 'pembuka', image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=400&q=80' },
+            { id: 'pemb-5', name: 'Beef Taco', price: 27000, category: 'pembuka', image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80' },
+            { id: 'pemb-6', name: 'Crispy Chicken', price: 24000, category: 'pembuka', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80' },
+
+            // Hidangan Utama
+            { id: 'utam-1', name: 'Beef Burger', price: 38000, category: 'utama', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-2', name: 'Chicken Steak', price: 42000, category: 'utama', image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-3', name: 'Spaghetti Carbonara', price: 37000, category: 'utama', image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-4', name: 'Fettucine Alfredo', price: 39000, category: 'utama', image: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-5', name: 'BBQ Chicken', price: 40000, category: 'utama', image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-6', name: 'Pizza', price: 55000, category: 'utama', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-7', name: 'Beef Lasagna', price: 48000, category: 'utama', image: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-8', name: 'Grilled Chicken', price: 41000, category: 'utama', image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=400&q=80' },
+            { id: 'utam-9', name: 'Double Cheeseburger', price: 47000, category: 'utama', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80' },
+
+            // Hidangan Penutup
+            { id: 'penu-1', name: 'Chocolate Brownies', price: 22000, category: 'penutup', image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=400&q=80' },
+            { id: 'penu-2', name: 'Ice Cream Sundae', price: 25000, category: 'penutup', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80' },
+            { id: 'penu-4', name: 'Tiramisu', price: 33000, category: 'penutup', image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=400&q=80' },
+            { id: 'penu-5', name: 'Donut Glaze', price: 18000, category: 'penutup', image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=400&q=80' },
+            { id: 'penu-6', name: 'Pancake Maple Syrup', price: 27000, category: 'penutup', image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=400&q=80' },
+            { id: 'penu-7', name: 'Fruit Tart', price: 29000, category: 'penutup', image: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=400&q=80' },
+
+            // Minuman
+            { id: 'minu-1', name: 'Cafe Latte', price: 27000, category: 'minuman', image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=400&q=80' },
+            { id: 'minu-3', name: 'Matcha Latte', price: 29000, category: 'minuman', image: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=400&q=80' },
+            { id: 'minu-4', name: 'Chocolate Milkshake', price: 32000, category: 'minuman', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=400&q=80' },
+            { id: 'minu-6', name: 'Mojito Lemon', price: 24000, category: 'minuman', image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80' },
+            { id: 'minu-7', name: 'Iced Tea', price: 15000, category: 'minuman', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=400&q=80' }
+        ];
+
+        // STATE MANAGEMENT (DI DALEM MEMORI)
+        let currentCart = []; // Pesanan saat ini { menuId, qty }
+        let queueOrders = []; // Daftar Pesanan (Belum Lunas / Dalam Antrean)
+        let historyOrders = []; // Riwayat Pesanan (Selesai/Lunas)
+        let activeTab = 'pesanan'; // Tab Aktif saat ini
+        let currentPayingOrder = null; // Order yang sedang diproses di kasir bayar
+        let selectedDigitalProviderName = ''; // Untuk digital bayar
+
+        // AMBIL WAKTU WIB SEPERTI JAM NYATA
+        function getWIBTime() {
+            const now = new Date();
+            // Konversi ke WIB (UTC+7)
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const wib = new Date(utc + (3600000 * 7));
+            
+            let hours = String(wib.getHours()).padStart(2, '0');
+            let minutes = String(wib.getMinutes()).padStart(2, '0');
+            let seconds = String(wib.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds} WIB`;
+        }
+
+        // INIT SYSTEM
+        window.onload = function() {
+            // Jalankan Live Clock
+            setInterval(() => {
+                const clockEl = document.getElementById('cust-time');
+                if (clockEl) {
+                    clockEl.value = getWIBTime();
+                }
+            }, 1000);
+
+            // Tampilkan Semua Menu Pertama Kali
+            renderMenu(menuList);
+            
+            // Set Meja Virtual Status
+            renderMejaStatusGrid();
+
+            // Set default waktu belanja
+            document.getElementById('cust-time').value = getWIBTime();
+            
+            // Pasang Event Listener Pencarian
+            document.getElementById('search-input').addEventListener('input', handleSearch);
+        };
+
+        // CUSTOM ALERT REPLACEMENT FOR IN-APP IFRAME FRIENDLY NOTIFICATIONS
+        let alertTimeout = null;
+        function showCustomAlert(title, message, isError = false) {
+            const alertBox = document.getElementById('custom-alert');
+            const alertTitle = document.getElementById('alert-title');
+            const alertMsg = document.getElementById('alert-msg');
+            const alertIcon = document.getElementById('alert-icon');
+
+            alertTitle.innerText = title;
+            alertMsg.innerText = message;
+
+            if (isError) {
+                alertBox.classList.remove('border-amber-500');
+                alertBox.classList.add('border-red-600');
+                alertIcon.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600"></i>`;
+            } else {
+                alertBox.classList.remove('border-red-600');
+                alertBox.classList.add('border-amber-500');
+                alertIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i>`;
+            }
+
+            alertBox.classList.remove('hidden');
+
+            if (alertTimeout) clearTimeout(alertTimeout);
+            alertTimeout = setTimeout(() => {
+                closeAlert();
+            }, 5000);
+        }
+
+        function closeAlert() {
+            document.getElementById('custom-alert').classList.add('hidden');
+        }
+
+        // RENDER MEJA GRID (KOSONG vs PENUH)
+        function renderMejaStatusGrid() {
+            const grid = document.getElementById('meja-status-grid');
+            grid.innerHTML = '';
+            
+            // Ambil daftar meja yang saat ini sedang aktif di "Daftar Pesanan"
+            const activeMejas = queueOrders.filter(o => o.sajian === 'Dine In' && o.meja).map(o => o.meja);
+
+            for (let i = 1; i <= 10; i++) {
+                const mejaLabel = `Meja ${i}`;
+                const isFull = activeMejas.includes(mejaLabel);
+
+                const badge = document.createElement('div');
+                badge.className = `text-center py-1 rounded text-[10px] font-bold transition-all ${
+                    isFull 
+                    ? 'bg-red-600/90 text-white border border-red-500 animate-pulse' 
+                    : 'bg-emerald-800/60 text-emerald-100 border border-emerald-600/40'
+                }`;
+                badge.innerHTML = `
+                    <div>M${i}</div>
+                    <div class="text-[8px] opacity-80">${isFull ? 'FULL' : 'KOSONG'}</div>
+                `;
+                grid.appendChild(badge);
+            }
+        }
+
+        // RENDER MENU BERDASARKAN FILTER/PENCARIAN
+        function renderMenu(items) {
+            // Bersihkan semua grid kategori
+            const gridPembuka = document.getElementById('grid-pembuka');
+            const gridUtama = document.getElementById('grid-utama');
+            const gridPenutup = document.getElementById('grid-penutup');
+            const gridMinuman = document.getElementById('grid-minuman');
+
+            gridPembuka.innerHTML = '';
+            gridUtama.innerHTML = '';
+            gridPenutup.innerHTML = '';
+            gridMinuman.innerHTML = '';
+
+            // Map filter items
+            const pembukaItems = items.filter(m => m.category === 'pembuka');
+            const utamaItems = items.filter(m => m.category === 'utama');
+            const penutupItems = items.filter(m => m.category === 'penutup');
+            const minumanItems = items.filter(m => m.category === 'minuman');
+
+            // Toggle visibility section if empty
+            toggleSectionVisibility('section-pembuka', pembukaItems.length > 0);
+            toggleSectionVisibility('section-utama', utamaItems.length > 0);
+            toggleSectionVisibility('section-penutup', penutupItems.length > 0);
+            toggleSectionVisibility('section-minuman', minumanItems.length > 0);
+
+            if (items.length === 0) {
+                document.getElementById('menu-not-found').classList.remove('hidden');
+                document.getElementById('menu-not-found').classList.add('flex');
+            } else {
+                document.getElementById('menu-not-found').classList.add('hidden');
+                document.getElementById('menu-not-found').classList.remove('flex');
+            }
+
+            // Render masing-masing item
+            pembukaItems.forEach(m => gridPembuka.appendChild(createMenuItemCard(m)));
+            utamaItems.forEach(m => gridUtama.appendChild(createMenuItemCard(m)));
+            penutupItems.forEach(m => gridPenutup.appendChild(createMenuItemCard(m)));
+            minumanItems.forEach(m => gridMinuman.appendChild(createMenuItemCard(m)));
+        }
+
+        function toggleSectionVisibility(id, condition) {
+            const element = document.getElementById(id);
+            if (condition) {
+                element.classList.remove('hidden');
+            } else {
+                element.classList.add('hidden');
+            }
+        }
+
+        // BUAT KARTU DAFTAR MENU (RESPONSIVE LAPTOP & HANDPHONE)
+        function createMenuItemCard(item) {
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-xl shadow-sm border border-stone-200 p-3 hover:border-amber-600 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group";
+            card.setAttribute('onclick', `addToCart('${item.id}')`);
+
+            // Format Harga Rupiah
+            const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price);
+
+            card.innerHTML = `
+                <div class="relative overflow-hidden rounded-lg aspect-[4/3] bg-stone-100 mb-3">
+                    <img src="${item.image}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80'">
+                    <span class="absolute top-2 right-2 bg-amber-900/90 backdrop-blur-md text-amber-100 text-[10px] font-bold px-2 py-0.5 rounded-full"><i class="fa-solid fa-mug-saucer mr-1"></i>${item.category}</span>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-stone-800 text-sm md:text-base leading-tight mb-1 group-hover:text-amber-800 transition-colors">${item.name}</h4>
+                    <div class="flex items-center justify-between mt-2 pt-2 border-t border-stone-100">
+                        <span class="text-xs font-black text-amber-950">${formattedPrice}</span>
+                        <span class="bg-amber-100 hover:bg-amber-800 text-amber-900 hover:text-white transition-all w-7 h-7 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-plus"></i></span>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // PENCARIAN MENU INSTAN (3 HURUF KATA KUNCI)
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const badge = document.getElementById('search-badge');
+            const statusIcon = document.getElementById('search-status-icon');
+
+            if (query.length >= 3) {
+                badge.classList.remove('hidden');
+                statusIcon.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-500 cursor-pointer" onclick="clearSearch()"></i>`;
+                
+                // Cari menu yang sesuai kata kunci
+                const matchedMenu = menuList.filter(item => item.name.toLowerCase().includes(query));
+                renderMenu(matchedMenu);
+            } else {
+                badge.classList.add('hidden');
+                statusIcon.innerHTML = `<i class="fa-solid fa-keyboard"></i>`;
+                renderMenu(menuList);
+            }
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('search-input');
+            input.value = '';
+            document.getElementById('search-badge').classList.add('hidden');
+            document.getElementById('search-status-icon').innerHTML = `<i class="fa-solid fa-keyboard"></i>`;
+            renderMenu(menuList);
+        }
+
+
+        // ================= SISTEM KERANJANG BELANJA (CART) =================
+
+        function addToCart(menuId) {
+            const existing = currentCart.find(item => item.menuId === menuId);
+            if (existing) {
+                if (existing.qty < 99) {
+                    existing.qty++;
+                    showCustomAlert("Menu Ditambahkan", `Jumlah ${menuList.find(m => m.id === menuId).name} dinaikkan menjadi ${existing.qty}.`);
+                } else {
+                    showCustomAlert("Batas Maksimal", "Pembelian satu menu dibatasi maksimal 99 porsi.", true);
+                }
+            } else {
+                currentCart.push({ menuId: menuId, qty: 1 });
+                showCustomAlert("Menu Ditambahkan", `${menuList.find(m => m.id === menuId).name} berhasil dimasukkan ke piring belanja.`);
+            }
+            renderCart();
+            
+            // Switch otomatis ke Tab Pesanan agar kasir tahu pesanan masuk
+            switchTab('pesanan');
+        }
+
+        function updateCartQty(menuId, change) {
+            const index = currentCart.findIndex(item => item.menuId === menuId);
+            if (index !== -1) {
+                let currentQty = currentCart[index].qty;
+                let newQty = currentQty + change;
+
+                if (newQty <= 0) {
+                    currentCart.splice(index, 1);
+                } else if (newQty > 99) {
+                    showCustomAlert("Batas Maksimal", "Jumlah maksimal adalah 99.", true);
+                    return;
+                } else {
+                    currentCart[index].qty = newQty;
+                }
+                renderCart();
+            }
+        }
+
+        function clearCurrentCart() {
+            if (currentCart.length === 0) return;
+            currentCart = [];
+            renderCart();
+            showCustomAlert("Keranjang Kosong", "Semua draf pesanan telah dihapus.");
+        }
+
+        function renderCart() {
+            const cartList = document.getElementById('cart-list');
+            const cartTotal = document.getElementById('cart-total');
+            const btnLanjut = document.getElementById('btn-lanjut-pesanan');
+
+            if (currentCart.length === 0) {
+                cartList.innerHTML = `
+                    <div class="h-48 flex flex-col items-center justify-center text-stone-400 text-center">
+                        <i class="fa-solid fa-mug-saucer text-4xl mb-3 text-stone-300"></i>
+                        <p class="text-sm font-medium">Belum ada pesanan.</p>
+                        <p class="text-xs text-stone-400 mt-1">Silakan klik menu makanan/minuman di sebelah kiri untuk memesan.</p>
+                    </div>
+                `;
+                cartTotal.innerText = "Rp0";
+                btnLanjut.disabled = true;
+                return;
+            }
+
+            btnLanjut.disabled = false;
+            cartList.innerHTML = '';
+            let total = 0;
+
+            currentCart.forEach(cartItem => {
+                const item = menuList.find(m => m.id === cartItem.menuId);
+                const subtotal = item.price * cartItem.qty;
+                total += subtotal;
+
+                const formattedSubtotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(subtotal);
+
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between gap-2 p-3 bg-stone-50 rounded-xl border border-stone-200/80 text-xs";
+                div.innerHTML = `
+                    <div class="flex-grow">
+                        <h4 class="font-extrabold text-stone-800">${item.name}</h4>
+                        <span class="text-[10px] text-stone-500">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price)} / porsi</span>
+                    </div>
+                    <!-- CONTROLLERS - / + -->
+                    <div class="flex items-center gap-1.5 shrink-0 bg-white border border-stone-200 px-2 py-1 rounded-lg">
+                        <button onclick="updateCartQty('${item.id}', -1)" class="w-5 h-5 flex items-center justify-center rounded-md bg-stone-100 hover:bg-red-50 hover:text-red-600 transition-colors font-bold text-xs">-</button>
+                        <span class="w-6 text-center font-bold text-stone-800">${cartItem.qty}</span>
+                        <button onclick="updateCartQty('${item.id}', 1)" class="w-5 h-5 flex items-center justify-center rounded-md bg-stone-100 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-xs">+</button>
+                    </div>
+                    <!-- INDIVIDUAL PRICE -->
+                    <div class="w-20 text-right font-black text-amber-950 shrink-0">
+                        ${formattedSubtotal}
+                    </div>
+                `;
+                cartList.appendChild(div);
+            });
+
+            cartTotal.innerText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(total);
+        }
+
+
+        // ================= PROSES DATA PELANGGAN =================
+
+        function showFormPelanggan() {
+            if (currentCart.length === 0) {
+                showCustomAlert("Piring Belanja Kosong", "Pilih menu terlebih dahulu.", true);
+                return;
+            }
+            // Sembunyikan piring pesanan, ganti dengan formulir biodata
+            document.getElementById('content-pesanan').classList.add('hidden');
+            document.getElementById('content-form-pelanggan').classList.remove('hidden');
+
+            // Set waktu otomatis instan
+            document.getElementById('cust-time').value = getWIBTime();
+            
+            // Atur pilihan default
+            document.getElementById('cust-name').focus();
+        }
+
+        function backToCart() {
+            document.getElementById('content-form-pelanggan').classList.add('hidden');
+            document.getElementById('content-pesanan').classList.remove('hidden');
+        }
+
+        function toggleMejaField(show) {
+            const field = document.getElementById('field-meja');
+            const selectMeja = document.getElementById('cust-meja');
+            if (show) {
+                field.classList.remove('hidden');
+            } else {
+                field.classList.add('hidden');
+                selectMeja.value = ''; // Reset nilai
+            }
+        }
+
+        function submitOrderToDaftar() {
+            const name = document.getElementById('cust-name').value.trim();
+            const sajian = document.querySelector('input[name="cust-sajian"]:checked').value;
+            const meja = document.getElementById('cust-meja').value;
+            const time = document.getElementById('cust-time').value;
+
+            // Validasi nama
+            if (!name) {
+                showCustomAlert("Input Tidak Valid", "Mohon isi nama pelanggan.", true);
+                return;
+            }
+
+            // Validasi meja jika dine-in
+            if (sajian === 'Dine In' && !meja) {
+                showCustomAlert("Meja Belum Dipilih", "Mohon pilih nomor meja untuk sajian Dine In.", true);
+                return;
+            }
+
+            // Hitung total harga final
+            let total = 0;
+            const detailPesanan = currentCart.map(cartItem => {
+                const item = menuList.find(m => m.id === cartItem.menuId);
+                const subtotal = item.price * cartItem.qty;
+                total += subtotal;
+                return {
+                    name: item.name,
+                    qty: cartItem.qty,
+                    price: item.price,
+                    subtotal: subtotal
+                };
+            });
+
+            // Buat ID pesanan unik
+            const orderId = 'ORD-' + Date.now();
+
+            // Masukkan objek baru ke antrean (Queue)
+            queueOrders.push({
+                id: orderId,
+                name: name,
+                sajian: sajian,
+                meja: sajian === 'Dine In' ? meja : '-',
+                time: time,
+                items: detailPesanan,
+                total: total
+            });
+
+            // Reset cart saat ini dan bersihkan form input
+            currentCart = [];
+            renderCart();
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-meja').value = '';
+            
+            // Update Tampilan virtual Meja & Badge
+            renderMejaStatusGrid();
+            updateDaftarPesananBadge();
+
+            // Beritahu kasir berhasil
+            showCustomAlert("Pesanan Disimpan", `Pesanan atas nama ${name} berhasil didaftarkan ke antrean.`);
+
+            // Redirect ke halaman "Daftar Pesanan"
+            switchTab('daftar-pesanan');
+        }
+
+        function updateDaftarPesananBadge() {
+            const badge = document.getElementById('badge-daftar-pesanan');
+            const antreanLabel = document.getElementById('badge-antrean-count');
+            const count = queueOrders.length;
+
+            if (count > 0) {
+                badge.classList.remove('hidden');
+                badge.innerText = count;
+                if (antreanLabel) antreanLabel.innerText = `${count} Aktif`;
+            } else {
+                badge.classList.add('hidden');
+                if (antreanLabel) antreanLabel.innerText = `0 Aktif`;
+            }
+        }
+
+
+        // ================= SISTEM TAB CONTROLLER (PESANAN, DAFTAR, RIWAYAT) =================
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+
+            // Atur Visual Button Tab
+            const tabs = ['pesanan', 'daftar', 'riwayat'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabName || (t === 'daftar' && tabName === 'daftar-pesanan')) {
+                    btn.className = "py-2.5 px-2 text-center rounded-xl text-xs md:text-sm font-bold flex flex-col items-center justify-center gap-1 transition-all bg-amber-700 text-white shadow";
+                } else {
+                    btn.className = "py-2.5 px-2 text-center rounded-xl text-xs md:text-sm font-bold flex flex-col items-center justify-center gap-1 transition-all text-stone-400 hover:text-amber-100 hover:bg-stone-800";
+                }
+            });
+
+            // Sembunyikan semua kontainer kanan
+            document.getElementById('content-pesanan').classList.add('hidden');
+            document.getElementById('content-form-pelanggan').classList.add('hidden');
+            document.getElementById('content-daftar-pesanan').classList.add('hidden');
+            document.getElementById('content-pembayaran').classList.add('hidden');
+            document.getElementById('content-riwayat-pesanan').classList.add('hidden');
+
+            // Tampilkan yang sesuai
+            if (tabName === 'pesanan') {
+                document.getElementById('content-pesanan').classList.remove('hidden');
+            } else if (tabName === 'daftar-pesanan' || tabName === 'daftar') {
+                document.getElementById('content-daftar-pesanan').classList.remove('hidden');
+                renderDaftarPesananList();
+            } else if (tabName === 'riwayat-pesanan' || tabName === 'riwayat') {
+                document.getElementById('content-riwayat-pesanan').classList.remove('hidden');
+                renderRiwayatPesananList();
+            }
+        }
+
+
+        // ================= RENDER LIST ANTRIAN DAFTAR PESANAN =================
+
+        function renderDaftarPesananList() {
+            const container = document.getElementById('daftar-pesanan-list');
+            
+            if (queueOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="h-48 flex flex-col items-center justify-center text-stone-400 text-center">
+                        <i class="fa-solid fa-receipt text-4xl mb-3 text-stone-300"></i>
+                        <p class="text-sm font-medium">Tidak ada antrean pesanan aktif.</p>
+                        <p class="text-xs text-stone-400 mt-1">Buat pesanan di tab sebelah dan klik "Simpan ke Daftar Pesanan".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            queueOrders.forEach((order, index) => {
+                const itemBox = document.createElement('div');
+                itemBox.className = "bg-stone-50 border border-stone-200 rounded-xl p-4 shadow-sm relative space-y-3";
+                
+                // Format Total
+                const totalFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(order.total);
+
+                // Build HTML items list
+                let itemsListHtml = '';
+                order.items.forEach(itm => {
+                    const priceFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(itm.price);
+                    itemsListHtml += `
+                        <div class="flex justify-between text-stone-600 border-b border-dashed border-stone-200/60 pb-1">
+                            <span>${itm.name} <span class="font-bold text-stone-800">x${itm.qty}</span></span>
+                            <span>${priceFormatted}</span>
+                        </div>
+                    `;
+                });
+
+                itemBox.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-extrabold text-amber-950 text-sm">${order.name}</h4>
+                            <div class="flex gap-2 text-[10px] text-stone-500 mt-1 font-semibold">
+                                <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded"><i class="fa-solid fa-chair mr-1"></i>${order.meja}</span>
+                                <span class="bg-stone-200 text-stone-800 px-1.5 py-0.5 rounded"><i class="fa-solid fa-utensils mr-1"></i>${order.sajian}</span>
+                                <span class="bg-stone-100 px-1.5 py-0.5 rounded"><i class="fa-solid fa-clock mr-1"></i>${order.time}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">ID: ${order.id.slice(0, 9)}</span>
+                            <span class="text-xs font-black text-amber-900">${totalFormatted}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-2.5 rounded-lg text-[11px] space-y-1 border border-stone-100">
+                        ${itemsListHtml}
+                    </div>
+
+                    <div class="flex justify-end pt-1">
+                        <button onclick="bukaProsesPembayaran('${order.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-4 rounded-lg shadow-sm transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> Bayar & Selesaikan
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(itemBox);
+            });
+        }
+
+
+        // ================= SISTEM TRANSAKSI PEMBAYARAN KASIR =================
+
+        function bukaProsesPembayaran(orderId) {
+            const order = queueOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            currentPayingOrder = order;
+
+            // Sembunyikan list, tunjukkan form pembayaran
+            document.getElementById('content-daftar-pesanan').classList.add('hidden');
+            document.getElementById('content-pembayaran').classList.remove('hidden');
+
+            // Set detail info pada panel pembayaran
+            document.getElementById('pay-name').innerText = order.name;
+            document.getElementById('pay-meja-label').innerText = order.meja !== '-' ? order.meja : 'Take Away';
+            document.getElementById('pay-sajian').innerText = order.sajian;
+            document.getElementById('pay-time').innerText = order.time;
+            document.getElementById('pay-total-tagihan').innerText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(order.total);
+
+            // Set default Pembayaran ke CASH
+            document.querySelector('input[name="pay-method"][value="cash"]').checked = true;
+            switchPayMethod('cash');
+        }
+
+        function cancelPembayaran() {
+            currentPayingOrder = null;
+            document.getElementById('content-pembayaran').classList.add('hidden');
+            document.getElementById('content-daftar-pesanan').classList.remove('hidden');
+        }
+
+        function switchPayMethod(method) {
+            const panelCash = document.getElementById('panel-cash');
+            const panelDigital = document.getElementById('panel-digital');
+
+            if (method === 'cash') {
+                panelCash.classList.remove('hidden');
+                panelDigital.classList.add('hidden');
+                
+                // Clear inputs cash
+                document.getElementById('cash-input').value = '';
+                document.getElementById('cash-change').innerText = 'Rp0';
+                document.getElementById('cash-input').focus();
+            } else {
+                panelCash.classList.add('hidden');
+                panelDigital.classList.remove('hidden');
+                
+                // Reset providers selection
+                resetDigitalProviders();
+            }
+        }
+
+        // --- SUB METODE: CASH ---
+        function calculateKembalian() {
+            if (!currentPayingOrder) return;
+            const cashInputVal = parseFloat(document.getElementById('cash-input').value) || 0;
+            const changeLabel = document.getElementById('cash-change');
+            
+            const selisih = cashInputVal - currentPayingOrder.total;
+            if (selisih > 0) {
+                changeLabel.innerText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(selisih);
+            } else {
+                changeLabel.innerText = '00';
+            }
+        }
+
+        function processPayCash() {
+            if (!currentPayingOrder) return;
+            const cashVal = parseFloat(document.getElementById('cash-input').value) || 0;
+
+            if (cashVal < currentPayingOrder.total) {
+                showCustomAlert("Pembayaran Gagal", "Uang yang diberikan pelanggan tidak mencukupi total tagihan.", true);
+                return;
+            }
+
+            // Sukses bayar cash, pindahkan pesanan dari Queue ke History
+            selesaikanPesanan('CASH');
+        }
+
+        // --- SUB METODE: DIGITAL ---
+        function resetDigitalProviders() {
+            const btns = document.querySelectorAll('.digi-provider');
+            btns.forEach(btn => btn.classList.remove('bg-amber-100', 'border-amber-600', 'scale-95'));
+            
+            document.getElementById('digi-bank-inputs').classList.add('hidden');
+            document.getElementById('digi-qris').classList.add('hidden');
+            
+            selectedDigitalProviderName = '';
+        }
+
+        function selectDigitalProvider(provider) {
+            resetDigitalProviders();
+            selectedDigitalProviderName = provider.toUpperCase();
+
+            // Highlight button
+            const btn = document.getElementById(`btn-digi-${provider}`);
+            btn.classList.add('bg-amber-100', 'border-amber-600', 'scale-95');
+
+            if (provider === 'bca' || provider === 'mandiri') {
+                document.getElementById('digi-bank-inputs').classList.remove('hidden');
+                document.getElementById('bank-selected-label').innerText = `E-Banking ${selectedDigitalProviderName}`;
+                
+                // Isi nominal otomatis (read-only)
+                document.getElementById('bank-amount').value = currentPayingOrder.total;
+                document.getElementById('bank-rek').value = '';
+                document.getElementById('bank-pin').value = '';
+                document.getElementById('bank-rek').focus();
+            } else {
+                // E-Wallet (DANA, OVO, GOPAY)
+                document.getElementById('digi-qris').classList.remove('hidden');
+                document.getElementById('qris-provider-label').innerText = `QRIS ${selectedDigitalProviderName}`;
+            }
+        }
+
+        function processDigitalBankSubmit() {
+            const rekVal = document.getElementById('bank-rek').value.trim();
+            const pinVal = document.getElementById('bank-pin').value.trim();
+
+            // Pembayaran Berhasil jika semua di-isi, jika kosong Gagal
+            if (rekVal !== "" && pinVal !== "") {
+                showCustomAlert("pembayaran berhasil", `E-Banking ${selectedDigitalProviderName} terverifikasi aman.`);
+                selesaikanPesanan(`TRANSFER ${selectedDigitalProviderName}`);
+            } else {
+                showCustomAlert("pembayaran gagal", "Harap isi semua kolom rekening dan PIN untuk otorisasi transfer.", true);
+            }
+        }
+
+        function simulateQrisSuccess() {
+            showCustomAlert("Pembayaran Berhasil", `Pindai QRIS ${selectedDigitalProviderName} sukses diverifikasi sistem.`);
+            selesaikanPesanan(`QRIS ${selectedDigitalProviderName}`);
+        }
+
+
+        // ================= SELESAIKAN ANTRIAN (PINDAH KE RIWAYAT) =================
+
+        function selesaikanPesanan(metodeSelesai) {
+            if (!currentPayingOrder) return;
+
+            // Catat waktu selesai (WIB)
+            const waktuSelesaiWib = getWIBTime();
+
+            // Buat objek riwayat final
+            const riwayatSelesai = {
+                ...currentPayingOrder,
+                waktuSelesai: waktuSelesaiWib,
+                caraBayar: metodeSelesai
+            };
+
+            // Masukkan ke history
+            historyOrders.unshift(riwayatSelesai);
+
+            // Hapus dari Queue antrean
+            queueOrders = queueOrders.filter(o => o.id !== currentPayingOrder.id);
+
+            // Reset status
+            currentPayingOrder = null;
+
+            // Update Tampilan virtual Meja & Badge
+            renderMejaStatusGrid();
+            updateDaftarPesananBadge();
+
+            // Pindah halaman ke Tab Riwayat Pesanan
+            switchTab('riwayat-pesanan');
+            
+            showCustomAlert("Transaksi Selesai", "Data berhasil diarsipkan ke riwayat transaksi fold.");
+        }
+
+
+        // ================= RENDER LIST RIWAYAT PESANAN =================
+
+        function renderRiwayatPesananList() {
+            const container = document.getElementById('riwayat-pesanan-list');
+            const badgeCount = document.getElementById('badge-riwayat-count');
+
+            const count = historyOrders.length;
+            badgeCount.innerText = `${count} Selesai`;
+
+            if (count === 0) {
+                container.innerHTML = `
+                    <div class="h-48 flex flex-col items-center justify-center text-stone-400 text-center">
+                        <i class="fa-solid fa-clock text-4xl mb-3 text-stone-300"></i>
+                        <p class="text-sm font-medium">Belum ada riwayat transaksi.</p>
+                        <p class="text-xs text-stone-400 mt-1">Selesaikan pembayaran di "Daftar Pesanan" untuk melihat riwayat di sini.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            historyOrders.forEach(order => {
+                const card = document.createElement('div');
+                card.className = "bg-stone-50 border border-stone-200 rounded-xl p-4 text-xs space-y-2 relative overflow-hidden";
+                
+                // Gold Ribbon Accent for finished transaction
+                card.innerHTML = `
+                    <div class="absolute top-0 right-0 bg-emerald-100 text-emerald-800 text-[9px] font-black px-2.5 py-1 rounded-bl-lg flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i> PAID - ${order.caraBayar}
+                    </div>
+
+                    <div class="pr-16">
+                        <h4 class="font-extrabold text-stone-800 text-sm flex items-center gap-1.5">
+                            <span>${order.name}</span>
+                        </h4>
+                        <div class="flex flex-wrap gap-1 text-[9px] text-stone-500 mt-1 font-semibold">
+                            <span class="bg-amber-100 text-amber-900 px-1 py-0.5 rounded">${order.meja}</span>
+                            <span class="bg-stone-200 text-stone-800 px-1 py-0.5 rounded">${order.sajian}</span>
+                            <span class="bg-stone-100 px-1 py-0.5 rounded">Mulai: ${order.time}</span>
+                            <span class="bg-emerald-50 text-emerald-800 px-1 py-0.5 rounded border border-emerald-200">Selesai: ${order.waktuSelesai}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-2 rounded-lg space-y-1 text-[10px] border border-stone-150/60 text-stone-600">
+                        ${order.items.map(itm => `
+                            <div class="flex justify-between">
+                                <span>${itm.name} <span class="font-black text-stone-800">x${itm.qty}</span></span>
+                                <span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(itm.subtotal)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="flex justify-between items-center pt-1 text-xs">
+                        <span class="text-stone-400 text-[10px] font-bold">TOTAL PENERIMAAN:</span>
+                        <span class="font-black text-amber-950 text-sm">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(order.total)}</span>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
